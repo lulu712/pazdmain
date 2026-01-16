@@ -3,6 +3,10 @@ const { defineConfig } = require('@vue/cli-service')
 // const Components = require('unplugin-vue-components/webpack')
 // const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 
+module.exports = {
+  publicPath: '/pazdmain/'
+}
+
 module.exports = defineConfig({
   transpileDependencies: true,
 
@@ -29,4 +33,5 @@ module.exports = defineConfig({
   //   host: '0.0.0.0',
   //   watchFiles: ['src/**/*', 'public/**/*'], // Windows Watch 修正
   // },
+  
 })
