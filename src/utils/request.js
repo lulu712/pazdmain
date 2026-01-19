@@ -1,46 +1,51 @@
-import axios from "axios";
-import { ElMessage } from "element-plus";
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
-const http=axios.create({
-     baseURL: 'https://v3pz.itndedu.com/v3pz',
-     timeout:10000
+const http = axios.create({
+  baseURL: 'https://v3pz.itndedu.com/v3pz',
+  timeout: 10000
 })
 
-//添加攔截器
+// ===== 請求攔截 =====
+http.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('pz_token')
 
-// 添加请求拦截器
-http.interceptors.request.use(function (config) {
-    // 在发送请求之前做些什么
-    const token= localStorage.getItem('pz_token')
-    //不需要添加token的api
-    const whiteUrl = ['get/code','/user/authentication','/login']
-    if(token && !whiteUrl.includes(config.url)){
-        config.headers['x-token']=token
-    }
-    return config;
-  }, function (error) {
-    // 对请求错误做些什么
-    return Promise.reject(error);
-  });
+    // 不需要 token 的 API
+    const whiteUrl = ['/get/code', '/user/authentication', '/login']
 
-// 添加响应拦截器
-axios.interceptors.response.use(function (response) {
-    // 對接口異常的數據,給用戶提示
-    if(response.data.code === -1){
-        ElMessage.warning(response.data.message)
-    }
-    if(response.data.code === -2){
-        localStorage.removeItem('pz_token')
-        localStorage.removeItem('pz_userInfo')
-        window.location.href=window.location.origin``
+    if (token && !whiteUrl.some(url => config.url.includes(url))) {
+      config.headers['x-token'] = token
     }
 
+    return config
+  },
+  error => Promise.reject(error)
+)
 
-    return response;
-  }, function (error) {
-    // 超出 2xx 范围的状态码都会触发该函数。
-    // 对响应错误做点什么
-    return Promise.reject(error);
-  });
+// ===== 回應攔截（🔥重點在這）=====
+http.interceptors.response.use(
+  response => {
+    const { code, message } = response.data || {}
 
-  export default http
+    if (code === -1) {
+      ElMessage.warning(message || '操作失敗')
+    }
+
+    if (code === -2) {
+      ElMessage.error('登入已失效，請重新登入')
+
+      // 🔥 斷根
+      localStorage.removeItem('pz_token')
+      localStorage.removeItem('pz_userInfo')
+
+      // 🔥 強制回登入頁
+      window.location.href = '/Login'
+    }
+
+    return response
+  },
+  error => Promise.reject(error)
+)
+
+export default http

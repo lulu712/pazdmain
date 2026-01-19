@@ -13,17 +13,18 @@
 
   <el-dialog v-model="dialogVisible" title="權限設定" width="500">
     <el-form>
-      <el-form-item label="名稱">
+      <el-form-item label="名稱" prop="name">
         <el-input v-model="form.name" placeholder="請輸入名稱" />
       </el-form-item>
 
-      <el-form-item label="權限">
+      <el-form-item label="權限" prop="permissions">
         <el-tree
+          style="max-width: 600px;"
           ref="treeRef"
           :data="permissionData"
           node-key="id"
           show-checkbox
-          default-expand-all
+          :default-checked-keys="defaultkeys"
         />
       </el-form-item>
     </el-form>
@@ -37,7 +38,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue'
-import { userGetMenu, menuList } from '@/api'
+import { userGetMenu, menuList,userSetMenu } from '@/api'
 
 // 表格資料
 const tableData = ref([])
@@ -45,27 +46,28 @@ const tableData = ref([])
 // Dialog 狀態
 const dialogVisible = ref(false)
 
-// 表單資料
+// form的數據
 const form = reactive({
   id: '',
   name: '',
   permissions: []
 })
 
-// Tree
+//樹形菜單權限數據
 const treeRef = ref()
 const permissionData = ref([])
 
-// 初始化
+
 onMounted(() => {
-  // 表格資料
-  menuList().then(res => {
-    tableData.value = res.data.data.list || []
+  // 菜單數據
+  menuList({ pageNum: 1, pageSize: 10 }).then(res => {
+    console.log('menuList API 回傳:', res); // ✅ 觀察完整回傳物件
+    tableData.value = res.data?.data?.list || []
   })
 
   // 權限樹
   userGetMenu().then(res => {
-    permissionData.value = res.data.data || []
+    permissionData.value = res.data?.data || []
   })
 })
 
@@ -106,6 +108,10 @@ const submit = () => {
   console.log('送出資料：', { ...form })
   dialogVisible.value = false
 }
+//選中權限
+const defaultkeys=[4,5]
+
+
 </script>
 
 <style lang="less" scoped>
