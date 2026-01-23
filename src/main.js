@@ -3,6 +3,7 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import PaneHead from './components/paneHead.vue'
 
 // Element Plus
 import ElementPlus from 'element-plus'
@@ -32,6 +33,8 @@ app.use(ElementPlus)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+//全局註冊
+app.component('PaneHead',PaneHead)
 
 // Router & Store
 app.use(router)

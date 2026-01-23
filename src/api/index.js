@@ -22,17 +22,17 @@ export const authAdmin =(params) =>{
      return request.get('/auth/admin',{params})
 }
 
-//菜單權限數據
+//菜單權限數據(顯示樹形結構,GET)
 export const userGetMenu =() =>{
      return request.get('/user/getmenu')
 }
 
-//菜單權限修改
+//菜單權限修改(POST)
 export const userSetMenu =(data) =>{
      return request.post('/user/setmenu',data)
 
 }
-//菜單權限列表
+//菜單權限列表(顯示列表,GET(需傳參數))
 export const menuList = (params) => {
   return request.get('/menu/list', { params })
 }
