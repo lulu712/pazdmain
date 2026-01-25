@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "deploy": "gh-pages -d dist"
   },
@@ -11,6 +11,7 @@
     "axios": "^1.13.2",
     "ci-info": "^4.3.1",
     "core-js": "^3.8.3",
+    "dayjs": "^1.11.19",
     "element-plus": "^2.11.8",
     "vue": "^3.2.13",
     "vue-router": "^4.6.3",
