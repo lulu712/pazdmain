@@ -42,5 +42,7 @@ export const menuSelectList =()=>{
      return request.get('/menu/selectlist')
 }
 
-
-
+//用戶信息修改(POST)
+export const updateUser=(data)=>{
+     return request.post('/update/user',data)
+}
