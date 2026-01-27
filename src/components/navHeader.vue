@@ -17,8 +17,7 @@
         </ul>
     </div>
     <div class="header-right">
-        <el-button type="danger" @click="handleLogout">登出</el-button>
-        <el-dropdown>
+        <el-dropdown @command="handleClick">
             <div class="el-dropdown-link flex-box">
                 <el-avatar
                     src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
@@ -26,13 +25,9 @@
                 <p class="user-name">admin</p>
             </div>
             <!-- 登入主頁-->
-            <template #dropdown>
+            <template #dropdown >
                 <el-dropdown-menu>
-                    <el-dropdown-item>Action 1</el-dropdown-item>
-                    <el-dropdown-item>Action 2</el-dropdown-item>
-                    <el-dropdown-item>Action 3</el-dropdown-item>
-                    <el-dropdown-item disabled>Action 4</el-dropdown-item>
-                    <el-dropdown-item divided>Action 5</el-dropdown-item>
+                    <el-dropdown-item command="cancel">登出</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
@@ -82,16 +77,21 @@ const closetTab=(item,index)=>{
     }
 }
 
-const handleLogout = () => {
-  // 1. 刪除登入資訊
-  localStorage.removeItem('pz_token')
-  localStorage.removeItem('pz_userInfo')
 
-  // 2. 提示訊息
-  ElMessage.success('已登出')
+const handleClick= (command) => {
+    if(command==="cancel"){
+         // 1. 刪除登入資訊
+        localStorage.removeItem('pz_token')
+        localStorage.removeItem('pz_userInfo')
 
-  // 3. 導回登入頁
-  router.replace('/Login')
+        // 2. 提示訊息
+        ElMessage.success('已登出')
+
+        // 3. 導回登入頁
+        router.replace('/Login')
+
+    }
+  
 }
 
 

@@ -1,5 +1,5 @@
 <template>
-<div>Admine</div>
+ <PaneHead/>
 <el-table :data="tableData.list" style="width: 100%; margin-top: 16px">
     <el-table-column prop="id" label="ID" />
     <el-table-column prop="name" label="名稱" />
