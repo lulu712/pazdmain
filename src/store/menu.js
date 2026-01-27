@@ -23,10 +23,12 @@ const mutations={
         //2.通過索引刪除數組指定元素
         state.selectMenu.splice(index,1)
     },
-  dynamicMenu(state, payload) {
+
+
+dynamicMenu(state, payload) {
   const menuList = payload.data.data
 
-  // 映射表：後端 component → 檔案真實位置
+  // 後端 component → 實際檔案映射
   const componentMap = {
     'auth/admin': 'auth/admin/AdminIndex',
     'auth/group': 'auth/group/GroupIndex',
@@ -39,38 +41,28 @@ const mutations={
 
   const modules = require.context('../views', true, /\.vue$/)
   const available = modules.keys()
+  console.log('Webpack 掃到的檔案清單 👉', available)
 
-  // 遞迴轉 route
-  function toRoute(menu) {
-    return menu.map(item => {
-      const route = {
-        path: '/' + item.path,
-        name: item.name,
-        meta: item.meta || {}
-      }
+  const toRoute = menu => menu.map(item => {
+    const route = { path: '/' + item.path, name: item.name, meta: item.meta || {} }
 
-      if (item.component) {
-        // 用映射表對齊 component 路徑
-        const compKey = componentMap[item.component] || item.component
-        const componentPath = `./${compKey.replace(/^\/+/, '')}.vue`
+    if (item.component) {
+      const compKey = componentMap[item.component.replace(/^\//, '')]
+      if (!compKey) return console.error('❌ 後端 component 沒映射表：', item.component), route
 
-        if (available.includes(componentPath)) {
-          route.component = modules(componentPath).default
-        } else {
-          console.error('找不到元件：', componentPath)
-        }
-      }
+      const componentPath = `./${compKey}.vue`
+      if (available.includes(componentPath)) route.component = modules(componentPath).default
+      else console.error('❌ 找不到元件：', componentPath)
+    }
 
-      // 處理子選單
-      if (item.children?.length) route.children = toRoute(item.children)
-
-      return route
-    })
-  }
+    if (item.children?.length) route.children = toRoute(item.children)
+    return route
+  })
 
   state.menuRoutes = toRoute(menuList)
   console.log('所有 route 👉', state.menuRoutes)
 }
+
 
 
 }
