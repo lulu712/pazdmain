@@ -48,8 +48,9 @@
 <script setup>
 import{ref,reactive} from 'vue'
 import { ElMessage } from 'element-plus'
-import {getCode,userAuthentication,login} from'../../api'
-import { useRouter } from 'vue-router'
+import {getCode,userAuthentication,login,menuPermissions } from'../../api'
+
+import { useStore } from 'vuex'
 
 //表單數據
 const loginForm=reactive({
@@ -135,7 +136,8 @@ const countdownChange=()=>{
   })
 }
 
-const router=useRouter()
+// const router=useRouter()
+const store= useStore()
 
 
 
@@ -167,7 +169,11 @@ const submitForm = async (formEl) => {
             //將token和用戶信息緩存到瀏覽器
             localStorage.setItem('pz_token',data.data.token)
             localStorage.setItem('pz_userInfo',JSON.stringify(data.data.userInfo))
-            router.push('/')
+            menuPermissions().then((data)=>{
+              store.commit('dynamicMenu',data)
+                  //router.push('/')
+            })
+           
           }
         });
       }

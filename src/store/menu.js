@@ -22,7 +22,56 @@ const mutations={
         const index = state.selectMenu.findIndex(val=>val.name === payload.name)
         //2.通過索引刪除數組指定元素
         state.selectMenu.splice(index,1)
-    }
+    },
+  dynamicMenu(state, payload) {
+  const menuList = payload.data.data
+
+  // 映射表：後端 component → 檔案真實位置
+  const componentMap = {
+    'auth/admin': 'auth/admin/AdminIndex',
+    'auth/group': 'auth/group/GroupIndex',
+    'vppz/staff': 'vppz/staff/StaffIndex',
+    'vppz/order': 'vppz/order/OrderIndex',
+    'login': 'Login/LoginView',
+    'mainPage': 'MainPage',
+    'dashboard': 'dashboard/DashboardIndex'
+  }
+
+  const modules = require.context('../views', true, /\.vue$/)
+  const available = modules.keys()
+
+  // 遞迴轉 route
+  function toRoute(menu) {
+    return menu.map(item => {
+      const route = {
+        path: '/' + item.path,
+        name: item.name,
+        meta: item.meta || {}
+      }
+
+      if (item.component) {
+        // 用映射表對齊 component 路徑
+        const compKey = componentMap[item.component] || item.component
+        const componentPath = `./${compKey.replace(/^\/+/, '')}.vue`
+
+        if (available.includes(componentPath)) {
+          route.component = modules(componentPath).default
+        } else {
+          console.error('找不到元件：', componentPath)
+        }
+      }
+
+      // 處理子選單
+      if (item.children?.length) route.children = toRoute(item.children)
+
+      return route
+    })
+  }
+
+  state.menuRoutes = toRoute(menuList)
+  console.log('所有 route 👉', state.menuRoutes)
+}
+
 
 }
 
