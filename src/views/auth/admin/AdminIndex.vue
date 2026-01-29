@@ -1,5 +1,5 @@
 <template>
- <PaneHead/>
+ <PaneHead />
 <el-table :data="tableData.list" style="width: 100%; margin-top: 16px">
     <el-table-column prop="id" label="ID" />
     <el-table-column prop="name" label="名稱" />
@@ -87,6 +87,10 @@ import { authAdmin,menuSelectList,updateUser } from '@/api';
 import {ref,reactive,onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import dayjs from 'dayjs';
+import { useRoute } from 'vue-router';
+
+const route= useRoute()
+console.log('當前路由參數:', route);
 
 //Vue會自動更新畫面（分頁參數：第幾頁,幾筆資料）
 const paginationData = reactive({
@@ -147,7 +151,7 @@ onMounted(()=>{
     getListData()
     menuSelectList().then(({data})=>{
         options.value=data.data
-        console.log('權限清單', options.value)
+    
     })
 })
 //請求列表

@@ -30,7 +30,8 @@ const mutations = {
 
 
   dynamicMenu(state, payload) {
-    const menuList = payload.data.data
+    // 兼容處理：payload 可能是 API 回傳對象，也可能是包含 data 的對象
+    const menuList = payload.data?.data || payload.data || []
     state.menuData = menuList
 
     // 後端 component → 實際檔案映射
@@ -46,20 +47,20 @@ const mutations = {
 
     const modules = require.context('../views', true, /\.vue$/)
     const available = modules.keys()
-    console.log('Webpack 掃到的檔案清單 👉', available)
+
 
     // 遞歸處理路由註冊（扁平化註冊到 main 下）
     const bindRoutes = (list) => {
       list.forEach(item => {
         // 如果有 component，代表是實際頁面，需要註冊路由
         if (item.component) {
-          console.log('🔍 正在處理選單項目:', item.meta?.name, '組件:', item.component)
+
           const compKey = componentMap[item.component.replace(/^\//, '')]
           const componentPath = `./${compKey}.vue`
 
           if (compKey && available.includes(componentPath)) {
-            // 優先使用 meta.path，因為 treeMenu 也是跳轉到這個路徑
-            const targetPath = (item.meta?.path || item.path || '').replace(/^\//, '')
+            // 標準化路徑：確保以 / 開頭，並作為絕對路徑註冊
+            const targetPath = '/' + (item.meta?.path || item.path || '').replace(/^\//, '')
 
             const route = {
               path: targetPath,
@@ -68,9 +69,24 @@ const mutations = {
               component: markRaw(modules(componentPath).default)
             }
 
-            // 直接添加到 main 路由下
+
+
+            // 直接註冊（不再註冊為 main 的子路由，這樣路徑匹配最穩健）
+            // 如果需要使用 Layout，就把 component 設為 Layout，並把頁面組件設為 children
             if (payload.router) {
-              payload.router.addRoute('main', route)
+
+              payload.router.addRoute({
+                path: targetPath,
+                component: markRaw(modules('./MainPage.vue').default), // 主佈局
+                children: [
+                  {
+                    path: '',
+                    name: item.name,
+                    meta: item.meta || {},
+                    component: route.component
+                  }
+                ]
+              })
             }
           }
         }

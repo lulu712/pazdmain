@@ -10,6 +10,10 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+
+
+
+
 // 開發環境防止 ResizeObserver loop
 if (process.env.NODE_ENV === 'development') {
   const RO = window.ResizeObserver
@@ -34,7 +38,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 //全局註冊
-app.component('PaneHead',PaneHead)
+app.component('PaneHead', PaneHead)
 
 // Router & Store
 app.use(router)

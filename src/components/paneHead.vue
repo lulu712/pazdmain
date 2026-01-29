@@ -1,11 +1,29 @@
 <template>
     <div class="panel-heading">
-        <div class="panel-lead">菜單管理</div>
-        <p class="description">菜單規則通常對應一個控制器的方法,同時菜單欄位數據也從規則中獲取</p>
+        <!-- 使用可選鏈接防止路由數據尚未加載時報錯 -->
+        <div class="panel-lead">{{ currentRoute.meta?.name }}</div>
+        <p class="description">{{ currentRoute.meta?.describe }}</p>
     </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+
+// 接受路由傳入的參數（可選，若不傳則自動取當前路由，將介紹欄由後端路由傳入）
+const props = defineProps({
+    route: {
+        type: Object,
+        default: null
+    }
+})
+
+const route = useRoute()
+
+// 優先使用 props 傳入的 route，否則使用 hook 獲取的 route
+const currentRoute = computed(() => props.route || route || { meta: {} })
+
+</script>
 
 <style lang="less" scoped >
 

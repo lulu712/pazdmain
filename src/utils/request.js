@@ -38,6 +38,8 @@ http.interceptors.response.use(
       // 🔥 斷根
       localStorage.removeItem('pz_token')
       localStorage.removeItem('pz_userInfo')
+      localStorage.removeItem('pz_v3pz')
+
 
       // 🔥 強制回登入頁
       window.location.href = '/Login'
