@@ -51,7 +51,7 @@
             node-key="id"
             show-checkbox
             :default-checked-keys="defaultKeys"
-            default-expanded-keys="[2]"
+            :default-expanded-keys="[2]"
          />
       </el-form-item>
     </el-form>

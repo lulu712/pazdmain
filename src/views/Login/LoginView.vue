@@ -50,6 +50,7 @@ import{ref,reactive} from 'vue'
 import { ElMessage } from 'element-plus'
 import {getCode,userAuthentication,login,menuPermissions } from'../../api'
 
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 //表單數據
@@ -136,7 +137,7 @@ const countdownChange=()=>{
   })
 }
 
-// const router=useRouter()
+const router=useRouter()
 const store= useStore()
 
 
@@ -170,8 +171,8 @@ const submitForm = async (formEl) => {
             localStorage.setItem('pz_token',data.data.token)
             localStorage.setItem('pz_userInfo',JSON.stringify(data.data.userInfo))
             menuPermissions().then((data)=>{
-              store.commit('dynamicMenu',data)
-                  //router.push('/')
+              store.commit('dynamicMenu', { ...data, router })
+              router.push('/')
             })
            
           }

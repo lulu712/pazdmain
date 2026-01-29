@@ -11,7 +11,7 @@
     :collapse="isCollapse"
   >
     <p class="logo-lg">{{isCollapse?'LULU': 'Lulu陪診'}}</p>
-    <tree-menu :index="1" :menuData="menuData"/>
+    <tree-menu index="1" :menuData="menuData"/>
   </el-menu>
 </template>
 
@@ -19,17 +19,18 @@
 <script setup>
 
 import treeMenu from './treeMenu.vue';
-import { useRouter } from 'vue-router';
-import { reactive,computed } from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 
-const router =useRouter()
-const menuData=reactive(router.options.routes[0].children)
-const store=useStore()
-const isCollapse=computed(() => store.state.menu.isCollapse)
+const store = useStore()
+const isCollapse = computed(() => store.state.menu.isCollapse)
 
-
-console.log(menuData);
+// 使用 store 中的動態菜單數據
+const menuData = computed(() => {
+  const dynamicMenu = store.state.menu.menuData
+  // 如果有動態數據則使用，否則(例如未登入)可能為空
+  return dynamicMenu && dynamicMenu.length > 0 ? dynamicMenu : []
+})
 const handleOpen = () => {}
 const handleClose = () => {}
 
