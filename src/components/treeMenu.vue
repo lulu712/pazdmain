@@ -6,7 +6,7 @@
         <span>Navigator One</span>
         </template>  -->
 
-        <!-- Group One -->
+        <!-- Gro     One -->
         <!-- <el-menu-item-group title="Group One">
         <el-menu-item index="1-1">item one</el-menu-item>
         <el-menu-item index="1-2">item two</el-menu-item>
@@ -88,11 +88,13 @@ const getIndex = (item) => {
 const router= useRouter()
 const store = useStore()
 //點擊菜單
-const handleClick=(item)=>{
+const handleClick=(item,active)=>{
     console.log('👆 點擊選單:', item.meta.name, '路由名稱:', item.name, '路徑:', item.meta.path)
     
     //把數據傳遞進去
     store.commit('addMenu',item.meta)
+
+    store.commit('updateMenuActive', active)
     
     // 優先使用路由名稱 (Name) 進行跳轉，這對動態路由最可靠
     if (item.name && router.hasRoute(item.name)) {

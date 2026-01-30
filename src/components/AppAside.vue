@@ -1,7 +1,6 @@
 <template>
   <el-menu
   :style="{width:!isCollapse? '230px':'64px'}"
-    default-active="2"
     class="aside-container"
     @open="handleOpen"
     @close="handleClose"
@@ -9,6 +8,7 @@
     text-color="#fff"
     active-text-color="#ffd04b"
     :collapse="isCollapse"
+    :default-active="active"
   >
     <p class="logo-lg">{{isCollapse?'LULU': 'Lulu陪診'}}</p>
     <tree-menu index="1" :menuData="menuData"/>
@@ -24,6 +24,10 @@ import { useStore } from 'vuex';
 
 const store = useStore()
 const isCollapse = computed(() => store.state.menu.isCollapse)
+
+
+//點選時保持高亮效果
+const active=computed(()=>store.state.menu.menuActive)
 
 // 使用 store 中的動態菜單數據
 const menuData = computed(() => {

@@ -10,6 +10,13 @@ const routes = [
         path: '/',
         component: Layout,
         name: 'main',
+        // 有本地存儲的話，導向儲存的第一個菜單路由
+        redirect: () => {
+            const data = JSON.parse(localStorage.getItem('pz_v3pz') || '{}')
+            const first = data.menu?.menuData?.[0]
+            // 如果有選單數據，優先導向第一個子選單，否則導向該選單路徑。若無數據則導向登錄。
+            return first ? (first.children?.[0]?.meta?.path || first.meta?.path || '/') : '/Login'
+        },
         children: []
     },
     {

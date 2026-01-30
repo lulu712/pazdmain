@@ -1,11 +1,13 @@
 
+import { updateUser } from '@/api'
 import { markRaw } from 'vue'
 
 //定義、存儲狀態(菜單展開收起)
 const state = {
   isCollapse: false,
   selectMenu: [],
-  menuData: []
+  menuData: [],
+  menuActive:'1-1'
 }
 
 //修改狀態
@@ -28,7 +30,7 @@ const mutations = {
     state.selectMenu.splice(index, 1)
   },
 
-
+  // 設置動態菜單並註冊路由
   dynamicMenu(state, payload) {
     // 兼容處理：payload 可能是 API 回傳對象，也可能是包含 data 的對象
     const menuList = payload.data?.data || payload.data || []
@@ -99,6 +101,9 @@ const mutations = {
     }
 
     bindRoutes(menuList)
+  },
+  updateMenuActive(state, payload) {
+    state.menuActive = payload
   }
 }
 

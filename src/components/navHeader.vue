@@ -20,9 +20,9 @@
         <el-dropdown @command="handleClick">
             <div class="el-dropdown-link flex-box">
                 <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                    :src="userInfo.avatar"
                 />
-                <p class="user-name">admin</p>
+                <p class="user-name">{{userInfo.name}}</p>
             </div>
             <!-- 登入主頁-->
             <template #dropdown >
@@ -51,6 +51,10 @@ const router=useRouter()
 
 //拿到菜單數據
 const selectMenu=computed(()=>store.state.menu.selectMenu)
+
+//連動用戶訊息(頭像及名稱)
+const userInfo = JSON.parse(localStorage.getItem('pz_userInfo'))
+
 
 //點擊關閉tag
 const closetTab=(item,index)=>{
