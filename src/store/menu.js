@@ -1,5 +1,4 @@
 
-import { updateUser } from '@/api'
 import { markRaw } from 'vue'
 
 //定義、存儲狀態(菜單展開收起)
@@ -7,7 +6,7 @@ const state = {
   isCollapse: false,
   selectMenu: [],
   menuData: [],
-  menuActive:'1-1'
+  menuActive: '1-1'
 }
 
 //修改狀態
@@ -58,9 +57,14 @@ const mutations = {
         if (item.component) {
 
           const compKey = componentMap[item.component.replace(/^\//, '')]
+          if (!compKey) {
+            console.warn(`⚠️ 未能識別的組件名稱: ${item.component}，請檢查 componentMap。`)
+            return
+          }
+
           const componentPath = `./${compKey}.vue`
 
-          if (compKey && available.includes(componentPath)) {
+          if (available.includes(componentPath)) {
             // 標準化路徑：確保以 / 開頭，並作為絕對路徑註冊
             const targetPath = '/' + (item.meta?.path || item.path || '').replace(/^\//, '')
 
@@ -90,6 +94,8 @@ const mutations = {
                 ]
               })
             }
+          } else {
+            console.error(`❌ 找不到組件檔案: ${componentPath} (原始映射: ${item.component})。請確認檔案是否存在。`)
           }
         }
 

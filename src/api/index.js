@@ -50,3 +50,14 @@ export const updateUser=(data)=>{
 export const menuPermissions =()=>{
      return request.get('/menu/permissions')
 }
+
+//陪護師頭像列表(GET)
+export const PhotoList =()=>{
+     return request.get('/photo/list')
+}
+
+//陪護師創建(POST)
+export const companion=(data)=>{
+     return request.post('/companion',data)
+}
+
