@@ -1,9 +1,23 @@
 <template>
+    <PaneHead/>
     <div class="btns">
         <el-button :icon="Plus" type="primary" @click="open()">新增</el-button>
+        <el-popconfirm
+            confirm-button-text='是'
+            cancel-button-text='否'
+            :icon="InfoFilled"
+            icon-color="#626AEF"
+            title="是否確認刪除"
+            @confirm="confirmEvent"
+         > 
+         <template #reference>
+             <el-button :icon="Delete" type="danger" >刪除</el-button>  
+         </template>
+       </el-popconfirm>
     </div>
-    <el-table :data="tableData.list" style="width: 100%; margin-top: 16px">
-        <el-table-column prop="id" label="ID" />
+    <el-table :data="tableData.list" style="width: 100%; margin-top: 16px" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" />
+        <el-table-column prop="id" label="ID" width="100" />
         <el-table-column prop="name" label="名稱" />
         <el-table-column label="頭像" >
             <template #default="scope">
@@ -132,11 +146,13 @@
 
 </template>
 <script setup>
-import {Plus, Check, Clock }from '@element-plus/icons-vue';
-import {reactive, ref, onMounted}from 'vue';
+import {Plus, Check, Clock, InfoFilled, Delete }from '@element-plus/icons-vue';
+import {reactive, ref, onMounted,nextTick }from 'vue';
 import dayjs from 'dayjs';
-import { PhotoList, companion,companionList } from '@/api';
+import { PhotoList, companion,companionList,deleteCompanion} from '@/api';
 import { ElMessage } from 'element-plus';
+import PaneHead from '@/components/paneHead.vue';
+
 
 onMounted(()=>{
     PhotoList().then(({data})=>{
@@ -209,6 +225,7 @@ const confirm = async () => {
                 if (data.code === 10000) {
                     ElMessage.success('操作成功')
                     closeFormDialog()
+                    getListData()
                 } else {
                     ElMessage.error(data.message)
                 }
@@ -220,8 +237,14 @@ const confirm = async () => {
     })
 }
 
-const open = ()=> {
+const open = (rowData={})=> {
     dialogFormVisible.value=true
+    nextTick(()=>{
+        //如果是編輯
+        if(rowData && rowData.id){
+            Object.assign(form, rowData)      
+        } 
+    })
 }
 
 //拿到後端傳回來的圖片列表
@@ -246,6 +269,31 @@ const handleCurrentChange=(val)=>{
         paginationData.pageNum=val
         getListData()
     }
+
+//表格選中數據
+const selectTableData=ref([])
+
+//多選框選中數據
+const handleSelectionChange=(val)=>{
+    selectTableData.value = val.map(item => ({ id: item.id }))
+ }   
+
+//點擊刪除事件
+const confirmEvent = () =>{
+    if(!selectTableData.value.length){
+      return  ElMessage.warning('請先選擇要刪除的護理師')
+    }
+    deleteCompanion({id:selectTableData.value}).then(({data})=>{
+        if(data.code === 10000){
+            ElMessage.success('刪除成功')
+            getListData()
+        }else{
+            ElMessage.error(data.message)
+        }
+    }) 
+}
+
+
 
 
 </script>
